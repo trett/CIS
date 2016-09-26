@@ -1,0 +1,22 @@
+.form-header {
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.search-block {
+    /*border: solid thin;*/
+    /*border-radius: 5px;*/
+    color: #333;
+}
+
+.search-block p {
+    margin: 2px;
+}
+
+.search-block i {
+    color: rgba(0, 0, 0, .5);
+}
+
+.top-buffer {
+    margin-top: 5px;
+}

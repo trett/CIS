@@ -1,0 +1,36 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns="http://www.w3.org/1999/xhtml" layout:decorate="~{template/template}">
+<div layout:fragment="content">
+    <h3 th:text="#{costcenter.header}">Cost Center</h3>
+    <hr>
+    <form th:action="@{/costcenter}" method="POST" th:object="${costCenter}"
+          class="form-horizontal">
+        <div class="form-group" th:classappend="${#fields.hasErrors('number')} ? 'has-error'">
+            <label th:for="number" th:text="#{costCenter.number}" class="col-sm-2 control-label"></label>
+            <div class="col-sm-7">
+                <input type="text" th:field="*{number}" class="form-control"/>
+                <p th:if="${#fields.hasErrors('number')}" th:errors="*{number}" class="text-danger"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label th:for="description" th:text="#{costCenter.description}" class="col-sm-2 control-label"></label>
+            <div class="col-sm-7">
+                <input type="text" th:field="*{description}" class="form-control"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10 btn-group">
+                <a th:href="@{/costcenter/{id}/delete(id=${costCenter.id})}" class="btn btn-default">
+                    &nbsp;<i class="fa fa-trash-o"></i>
+                    <span th:text="#{button.delete}" th:remove="tag">Delete</span>
+                </a>
+                <button type="submit" class="btn btn-default">
+                    <i class="fa fa-floppy-o"></i>&nbsp;<span th:text="#{button.save}" th:remove="tag">Save</span>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+</html>

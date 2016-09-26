@@ -1,0 +1,17 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns="http://www.w3.org/1999/xhtml" layout:decorate="~{template/template}">
+<div layout:fragment="content">
+    <table class="table table-striped table-hover" id="datatable" style="cursor:pointer">
+        <thead>
+        <tr>
+           <th layout:fragment="table-header"></th>
+        </tr>
+        </thead>
+    </table>
+</div>
+<th:block layout:fragment="script">
+    <object th:remove="tag" th:include="fragments :: init-table" ></object>
+</th:block>
+</html>

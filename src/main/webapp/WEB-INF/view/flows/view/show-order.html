@@ -1,0 +1,70 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<!--suppress ALL -->
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns="http://www.w3.org/1999/xhtml" layout:decorate="~{template/template}">
+<div layout:fragment="content">
+    <div class="col-md-12">
+        <h3>
+            <span class="fa fa-user" aria-hidden="true"></span>
+            <span th:text="${employee.firstName} + ' ' +  ${employee.lastName}"></span>
+        </h3>
+    </div>
+    <div class="col-md-8">
+        <div th:if="${not #lists.isEmpty(assets)}">
+            <table class="table" style="margin-top: 10px">
+                <thead>
+                <tr>
+                    <th th:text="#{deviceType.type}"></th>
+                    <th th:text="#{deviceBrand.brand}"></th>
+                    <th th:text="#{deviceModel.model}"></th>
+                    <th th:text="#{asset.serialNumber}"></th>
+                    <th th:text="#{asset.inventoryNumber}"></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tr th:each="a,itr : ${assets}">
+                    <td th:text="${{a.deviceModel.deviceType.type}}"></td>
+                    <td th:text="${{a.deviceModel.deviceBrand.brand}}"></td>
+                    <td th:text="${{a.deviceModel.model}}"></td>
+                    <td th:text="${#strings.toUpperCase(a.serialNumber)}"></td>
+                    <td th:text="${#strings.toUpperCase(a.inventoryNumber)}"></td>
+                    <td><a th:href="${flowExecutionUrl} + '&_eventId=removeitem&index=' + ${{itr.index}}">
+                        <i class="fa fa-minus-circle" aria-hidden="true"></i></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6">
+                        <a th:href="${flowExecutionUrl} + '&_eventId=add'">
+                            <i class="fa fa-plus fa-2x"></i>
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div th:if="${#lists.isEmpty(assets)}" class="jumbotron">
+            <h3>Create Invoice</h3>
+            <a th:href="${flowExecutionUrl} + '&_eventId=add'" class="btn btn-lg btn-primary">
+                <i class="fa fa-plus"></i>&nbsp;<span th:text="#{button.start}" th:remove="tag">Start</span>
+            </a>
+        </div>
+    </div>
+    <div th:if="${not #lists.isEmpty(assets)}" class="col-md-12">
+        <div class="btn-group">
+            <a th:href="${flowExecutionUrl} + '&_eventId=cancel'" class="btn  btn-default">
+                <i class="fa fa-ban"></i>&nbsp;<span th:text="#{button.cancel}" th:remove="tag">Cancel</span>
+            </a>
+            <a th:href="${flowExecutionUrl} + '&_eventId=draft'" class="btn btn-default">
+                <i class="fa fa-wpforms"></i>&nbsp;<span th:text="#{button.draft}" th:remove="tag">Save as draft</span>
+            </a>
+
+            <a th:href="${flowExecutionUrl} + '&_eventId=finish'" class="btn btn-default"
+               th:onclick="'javascript:$.blockUI( { message: \'' + #{saving} + '\'} );'">
+                <i class="fa fa-floppy-o"></i>&nbsp;
+                <span th:text="#{button.save}" th:remove="tag">
+                Save</span>
+            </a>
+        </div>
+    </div>
+</div>
+</html>

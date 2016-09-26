@@ -1,0 +1,16 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head th:include="template/template :: header"></head>
+<div class="row">
+    <div class="col-md-12">
+    <div  class="jumbotron" style="margin: 50px; padding: 50px;" th:fragment="message(level, message)" th:classappend="'alert-' + ${level}">
+        <h1 th:text="#{error}"></h1>
+        <p th:text="${message}">Error occurred.</p>
+        <button class="btn btn-default" onclick="history.back()">
+            <i class="fa fa-arrow-left"></i>&nbsp;<span th:text="#{back}" th:remove="tag">Back</span>
+        </button>
+    </div>
+    </div>
+</div>
+</html>

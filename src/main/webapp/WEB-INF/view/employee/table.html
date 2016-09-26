@@ -1,0 +1,12 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns="http://www.w3.org/1999/xhtml" layout:decorate="~{template/table-template}">
+<div layout:fragment="table-header">
+    <th th:text="#{employee.firstName}">First Name</th>
+    <th th:text="#{employee.lastName}">Last Name</th>
+    <th th:text="#{employee.middleName}">Middle Name</th>
+    <th th:text="#{employee.position}">Position</th>
+    <th th:text="#{costCenter.number}">Cost Center</th>
+</div>
+</html>

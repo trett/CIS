@@ -1,0 +1,34 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns="http://www.w3.org/1999/xhtml" layout:decorate="~{template/template}">
+<div layout:fragment="content">
+    <h3 th:text="#{tracking}">Tracking</h3>
+    <div class="row">
+        <div class="col-md-8">
+            <table class="table table-striped table-bordered">
+                <tr>
+                    <td th:text="#{asset.id}" class="col-sm-2"></td>
+                    <td th:text="${tracking.asset.id}" class="col-sm-7"></td>
+                </tr>
+                <tr>
+                    <td th:text="#{date}" class="col-sm-2"></td>
+                    <td th:text="${#dates.format(tracking.date, 'dd MMM yyyy HH:mm')}" class="col-sm-7"></td>
+                </tr>
+                <tr>
+                    <td th:text="#{event}" class="col-sm-2"></td>
+                    <td th:text="${tracking.event}" class="col-sm-7"></td>
+                </tr>
+                <tr>
+                    <td th:text="#{employee.firstName}" class="col-sm-2"></td>
+                    <td th:text="${tracking.issuer.firstName}" class="col-sm-7"></td>
+                </tr>
+                <tr>
+                    <td th:text="#{employee.lastName}" class="col-sm-2"></td>
+                    <td th:text="${tracking.issuer.lastName}" class="col-sm-7"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+</html>

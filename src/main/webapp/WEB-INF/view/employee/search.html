@@ -1,0 +1,41 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns="http://www.w3.org/1999/xhtml" layout:decorate="~{template/template}">
+<div layout:fragment="content">
+    <h3 th:text="#{employee.search}">Employee search</h3>
+    <input type="text" class="form-control input-lg" placeholder="Search" id="search-criteria"
+           style="margin-bottom: 25px" onkeypress="searchEmployee()">
+    <div class="col-md-12" id="employee-list">
+    </div>
+</div>
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        function searchEmployee() {
+            $('#employee-list').empty();
+            $.ajax({
+                url: '/api/employee/search',
+                data: 'name=' + $('#search-criteria').val(),
+                type: 'GET',
+                success: function (data) {
+                    var currentUrl = window.location.pathname;
+                    $.each(data, function (i, val) {
+                        var url = (currentUrl.indexOf("flow") === -1) ? '/employee/' + val.id + '/assets'
+                                : [[${flowExecutionUrl}]] + '&_eventId=next&id=' + val.id;
+                        $('#employee-list').append(
+                                "<div class='row top-buffer'><a href=" + url + ">"
+                                + "<div class='col-md-5 search-block'><div class='row'><div class='col-md-2'>"
+                                + "<i class='fa fa-user fa-5x'></i></div>"
+                                + "<div class='col-md-10'>"
+                                + "<p>" + val.firstName + " " + val.lastName
+                                + "</p><p>" + val.position
+                                + "</p><p>" + val.costCenter.number
+                                + "</p></div></div></div></a></div><hr>"
+                        );
+                    })
+                },
+            });
+        }
+    </script>
+</th:block>
+</html>

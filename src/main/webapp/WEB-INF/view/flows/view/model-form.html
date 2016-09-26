@@ -1,0 +1,40 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<!--suppress ALL -->
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns="http://www.w3.org/1999/xhtml" layout:decorate="~{template/template}">
+<div layout:fragment="content">
+    <h3 th:text="#{model.header}">Device Model</h3>
+    <hr>
+    <div class="col-md-6">
+        <form id="device-type-form" th:object="${deviceModel}" th:action="${flowExecutionUrl}" method="post">
+            <div class="form-group">
+                <label th:for="deviceType.type" th:text="#{deviceType.type}" class="control-label"></label>
+                <input type="text" th:field="*{deviceType.type}" class="form-control" disabled="disabled">
+            </div>
+            <div class="form-group">
+                <label th:for="deviceBrand.brand" th:text="#{deviceBrand.brand}" class="control-label"></label>
+                <input type="text" th:field="*{deviceBrand.brand}" class="form-control" disabled="disabled">
+            </div>
+            <div class="form-group" th:classappend="${#fields.hasErrors('model')} ? 'has-error'">
+                <label th:for="model" th:text="#{deviceModel.model}" class="control-label"></label>
+                <input type="text" th:field="*{model}" class="form-control"/>
+                <p th:if="${#fields.hasErrors('model')}" th:errors="*{model}" class="text-danger"></p>
+            </div>
+            <div class="form-group">
+                <label th:for="model" th:text="#{deviceModel.itemNumber}" class="control-label"></label>
+                <input type="text" th:field="*{itemNumber}" class="form-control"/>
+            </div>
+            <div class="btn-group">
+                <!--<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}">-->
+                <button class="btn btn-default" name="_eventId_cancel">
+                    <i class="fa fa-ban">&nbsp;</i><span th:text="#{button.cancel}" th:remove="tag">Cancel</span>
+                </button>
+                <button class="btn btn-default" name="_eventId_save">
+                    <i class="fa fa-floppy-o"></i>&nbsp;<span th:text="#{button.save}" th:remove="tag">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+</html>

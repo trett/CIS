@@ -1,0 +1,64 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns="http://www.w3.org/1999/xhtml" layout:decorate="~{template/template}">
+<div layout:fragment="content">
+    <h3 th:text="#{employee.header}">Employee</h3>
+    <hr>
+    <form action="/employee" th:action="@{/employee}" method="POST" th:object="${employee}" class="form-horizontal">
+        <div class="form-group" th:classappend="${#fields.hasErrors('firstName')} ? 'has-error'">
+            <label th:for="firstName" th:text="#{employee.firstName}" class="col-sm-2 control-label"></label>
+            <div class="col-sm-7">
+                <input type="text" th:field="*{firstName}" class="form-control"/>
+                <p th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" class="text-danger"></p>
+            </div>
+        </div>
+        <div class="form-group" th:classappend="${#fields.hasErrors('lastName')} ? 'has-error'">
+            <label th:for="lastName" th:text="#{employee.lastName}" class="col-sm-2 control-label"></label>
+            <div class="col-sm-7">
+                <input type="text" th:field="*{lastName}" class="form-control"/>
+                <p th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" class="text-danger"></p>
+            </div>
+        </div>
+        <div class="form-group" th:classappend="${#fields.hasErrors('middleName')} ? 'has-error'">
+            <label th:for="middleName" th:text="#{employee.middleName}" class="col-sm-2 control-label"></label>
+            <div class="col-sm-7">
+                <input type="text" th:field="*{middleName}" class="form-control"/>
+            </div>
+        </div>
+        <div class="form-group" th:classappend="${#fields.hasErrors('position')} ? 'has-error'">
+            <label th:for="position" th:text="#{employee.position}" class="col-sm-2 control-label"></label>
+            <div class="col-sm-7">
+                <input type="text" th:field="*{position}" class="form-control"/>
+                <p th:if="${#fields.hasErrors('position')}" th:errors="*{position}" class="text-danger"></p>
+            </div>
+        </div>
+        <div class="form-group" th:classappend="${#fields.hasErrors('costCenter.number')} ? 'has-error'">
+            <label th:for="costCenter.number" th:text="#{costCenter.number}" class="col-sm-2 control-label"></label>
+            <div class="col-sm-7"  id="cost-center-select">
+                <select id="employee-form-cost-center" name="costCenter.number" class="form-control">
+                    <option th:text="${employee.costCenter.number != null} ? ${employee.costCenter.number} : 'Cost Center'"
+                            th:disabled="disabled" th:selected="selected">Cost Center
+                    </option>
+                </select>
+                <p th:if="${#fields.hasErrors('costCenter.number')}" th:errors="*{costCenter.number}"
+                   class="text-danger"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10 btn-group">
+                <a th:href="@{/employee/{id}/delete(id=${employee.id})}" class="btn btn-default">
+                    &nbsp;<i class="fa fa-trash-o"></i>
+                    <span th:text="#{button.delete}" th:remove="tag">Delete</span>
+                </a>
+                <button type="submit" class="btn btn-default">
+                    <i class="fa fa-floppy-o"></i>&nbsp;<span th:text="#{button.save}" th:remove="tag">Save</span>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block layout:fragment="script">
+    <script th:src="@{/js/EmployeeForm.js}"></script>
+</th:block>
+</html>

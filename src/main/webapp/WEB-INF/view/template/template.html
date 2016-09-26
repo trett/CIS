@@ -1,0 +1,121 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/xhtml">
+<head th:fragment="header">
+    <title>CIS</title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="/webjars/jquery/2.2.4/dist/jquery.min.js"></script>
+    <link href="/images/favicon.ico" rel="icon" type="image/x-icon"/>
+    <link rel='stylesheet' href='/webjars/bootstrap/3.3.6/css/bootstrap.min.css'/>
+    <link rel='stylesheet' href='/webjars/datatables/1.10.12/media/css/dataTables.bootstrap.css'/>
+    <link rel='stylesheet' href='/webjars/font-awesome/4.6.3/css/font-awesome.min.css'/>
+    <link rel='stylesheet' th:href="@{/css/simple-sidebar.css}"/>
+    <link rel='stylesheet' th:href="@{/css/custom.css}"/>
+    <script src="/webjars/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="/webjars/datatables/1.10.12/media/js/jquery.dataTables.min.js"></script>
+    <script src="/webjars/datatables/1.10.12/media/js/dataTables.bootstrap.min.js"></script>
+    <script src="/webjars/jquery-blockui/2.65/jquery.blockUI.js"></script>
+    <script src="/webjars/highcharts/4.2.6/highcharts.js"></script>
+    <script th:src="@{/js/Message.js}"></script>
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="navbar-header">
+        <a class="navbar-brand" href="/home">CIS</a>
+    </div>
+    <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-middle">
+            <li><a th:href="@{/costcenter}" th:text="#{create.costCenter}"></a>
+            </li>
+            <li>
+                <a th:href="@{/employee}" th:text="#{create.employee}"></a>
+            </li>
+            <li>
+                <a th:href="@{/model-flow}" th:text="#{create.device}"></a>
+            </li>
+            <li>
+                <a th:href="@{/invoice-flow}" th:text="#{create.invoice}"></a>
+            </li>
+            <li>
+                <a th:href="@{/employee/search}" th:text="#{employee.assets}"></a>
+            </li>
+            <li>
+                <a th:href="@{/tracking/list}" th:text="#{tracking}"></a>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                   aria-expanded="false">
+                    <span th:text="#{report}"></span>
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a th:href="@{/report/devicemodelform}">
+                            <i class="fa fa-gears" aria-hidden="true"></i>&nbsp;
+                            <span th:remove="tag" th:text="#{model.header}">Profile</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                   aria-expanded="false">
+                    <span sec:authentication="name"></span>
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="/profile">
+                            <i class="fa fa-cog" aria-hidden="true"></i>&nbsp;
+                            <span th:remove="tag" th:text="#{profile.header}">Profile</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/logout">
+                            <i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp;
+                            <span th:remove="tag" th:text="#{logout}">Exit</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div id="wrapper">
+    <div id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+            <li th:classappend="${#httpServletRequest.getRequestURI().startsWith('/employee') ? 'active':''}">
+                <a href="/employee/list"><i class="fa fa-user" aria-hidden="true"></i>&nbsp; Employees</a></li>
+            <li th:classappend="${#httpServletRequest.getRequestURI().startsWith('/asset/') ? 'active':''}">
+                <a href="/asset/list"><i class="fa fa-laptop" aria-hidden="true"></i>&nbsp; Assets</a></li>
+            <li th:classappend="${#httpServletRequest.getRequestURI().startsWith('/invoice/') ? 'active':''}">
+                <a href="/invoice/list"><i class="fa fa-list" aria-hidden="true"></i>&nbsp; Invoices</a></li>
+            <li th:classappend="${#httpServletRequest.getRequestURI().startsWith('/costcenter/') ? 'active':''}">
+                <a href="/costcenter/list"><i class="fa fa-money" aria-hidden="true"></i>&nbsp; Cost Centers</a></li>
+            <li th:classappend="${#httpServletRequest.getRequestURI().startsWith('/devicebrand/') ? 'active':''}">
+                <a href="/devicebrand/list"><i class="fa fa-building-o" aria-hidden="true"></i>&nbsp; Brands</a></li>
+            <li th:classappend="${#httpServletRequest.getRequestURI().startsWith('/devicemodel/') ? 'active':''}">
+                <a href="/devicemodel/list"><i class="fa fa-gears" aria-hidden="true"></i>&nbsp; Models</a></li>
+            <li th:classappend="${#httpServletRequest.getRequestURI().startsWith('/devicetype/') ? 'active':''}">
+                <a href="/devicetype/list"><i class="fa fa-hdd-o" aria-hidden="true"></i>&nbsp; Type</a></li>
+        </ul>
+    </div>
+    <div id="page-content-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div id="messagebody-block"></div>
+                    <div layout:fragment="content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="script"/>
+</body>
+</html>

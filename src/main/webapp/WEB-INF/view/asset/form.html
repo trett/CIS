@@ -1,0 +1,63 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns="http://www.w3.org/1999/xhtml" layout:decorate="~{template/template}">
+<div layout:fragment="content">
+    <h3 th:text="#{asset.header}">Asset</h3>
+    <div class="row">
+        <div class="col-md-8">
+            <table class="table table-striped table-bordered">
+                <tr>
+                    <td th:text="#{id}" class="col-sm-2"></td>
+                    <td th:text="${asset.id}" class="col-sm-7"></td>
+                </tr>
+                <tr>
+                    <td th:text="#{deviceType.type}" class="col-sm-2"></td>
+                    <td th:text="${asset.deviceModel.deviceType.type}" class="col-sm-7"></td>
+                </tr>
+                <tr>
+                    <td th:text="#{deviceBrand.brand}" class="col-sm-2"></td>
+                    <td th:text="${asset.deviceModel.deviceBrand.brand}" class="col-sm-7"></td>
+                </tr>
+                <tr>
+                    <td th:text="#{asset.serialNumber}" class="col-sm-2"></td>
+                    <td th:text="${asset.serialNumber}" class="col-sm-7"></td>
+                </tr>
+                <tr>
+                    <td th:text="#{asset.inventoryNumber}" class="col-sm-2"></td>
+                    <td th:text="${asset.inventoryNumber}" class="col-sm-7"></td>
+                </tr>
+                <tr>
+                    <td th:text="#{owner}" class="col-sm-2"></td>
+                    <td th:text="${asset.employee.firstName} + ' ' + ${asset.employee.lastName}" class="col-sm-7"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <form>
+                <div class="form-group">
+                    <label th:for="status" th:text="#{status}" class="col-sm-1 control-label"></label>
+                    <select class="form-control" id="status-select" th:field="*{asset.status}">
+                        <option th:each="_status : ${statuses}" th:value="${_status}" th:text="${_status}"></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label th:for="comment" th:text="#{comment}" class="col-sm-1 control-label"></label>
+                    <input type="text" id="comment" class="form-control" th:field="${asset.comment}">
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-default"
+                            th:onclick=" 'javascript:update(\'' + ${asset.id} +'\');'">
+                        <i class="fa fa-floppy-o"></i>&nbsp;<span th:text="#{button.save}" th:remove="tag">Save</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="script">
+    <script th:src="@{/js/AssetForm.js}"></script>
+</th:block>
+</html>

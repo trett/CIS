@@ -1,0 +1,58 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns="http://www.w3.org/1999/xhtml" layout:decorate="~{template/template}">
+<div layout:fragment="content">
+    <h3 th:text="#{invoice.header}">Invoice</h3>
+    <hr>
+    <div>
+        <p class="bg-info form-header" th:text="${invoice == null} ? 'DRAFT' : ${invoice.status}" id="status">DRAFT</p>
+        <p th:text="${invoice == null} ? ${#dates.format(#dates.createNow(), 'dd MMM yyyy HH:mm')} :
+        ${#dates.format(invoice.date, 'dd MMM yyyy HH:mm')}">2016-09-01</p>
+        <p th:text="#{employee.header} + ': ' + ${invoice.employee.firstName} + ' ' + ${invoice.employee.lastName}"></p>
+        <p th:text="#{issuer.header} + ': ' + ${issuer.firstName} + ' ' + ${issuer.lastName}"></p>
+    </div>
+    <div th:if="${not #lists.isEmpty(assets)}">
+        <table class="table table-hover" style="cursor:pointer">
+            <thead>
+            <tr>
+                <th th:text="#{id}"></th>
+                <th th:text="#{deviceType.type}"></th>
+                <th th:text="#{deviceBrand.brand}"></th>
+                <th th:text="#{deviceModel.model}"></th>
+                <th th:text="#{asset.serialNumber}"></th>
+                <th th:text="#{asset.inventoryNumber}"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${assets}" th:onclick="'javascript:rowClicked(\'' + ${item.id} + '\'); '">
+                <td th:text="${item.id}"></td>
+                <td th:text="${item.deviceModel.deviceType.type}"></td>
+                <td th:text="${item.deviceModel.deviceBrand.brand}"></td>
+                <td th:text="${item.deviceModel.model}"></td>
+                <td th:text="${item.serialNumber}"></td>
+                <td th:text="${item.inventoryNumber}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p th:if="${#lists.isEmpty(assets)}" th:text="#{not.found}"></p>
+    <div class="btn-group">
+        <button type="button" class="btn btn-default" id="delete-button"
+                th:onclick="'javascript:_delete(' + ${invoice.id} + ',\'' + #{deleting} + '\');'">
+            <i class="fa fa-trash-o"></i>&nbsp;<span th:text="#{button.delete}" th:remove="tag">Save</span>
+        </button>
+        <button type="button" class="btn btn-default" id="publish-button"
+                th:onclick="'javascript:publish(' + ${invoice.id} + ')'">
+            <i class="fa fa-registered"></i>&nbsp;<span th:text="#{button.publish}" th:remove="tag"></span>
+        </button>
+        <button type="button" class="btn btn-default" id="print-button"
+                th:onclick="'javascript:print(' + ${invoice.employee.id} + ',' + ${issuer.id} + ',' + ${invoice.id} + ')'">
+            <i class="fa fa-print"></i>&nbsp;<span th:text="#{button.print}" th:remove="tag">Save</span>
+        </button>
+    </div>
+</div>
+<th:block layout:fragment="script">
+    <script th:src="@{/js/InvoiceForm.js}"></script>
+</th:block>
+</html>

@@ -1,0 +1,11 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns="http://www.w3.org/1999/xhtml" layout:decorate="~{template/table-template}">
+<div layout:fragment="table-header">
+    <th th:text="#{deviceModel.model}">Model</th>
+    <th th:text="#{deviceBrand.brand}">Brand</th>
+    <th th:text="#{deviceType.type}">Type</th>
+    <th th:text="#{deviceModel.itemNumber}">Item Number</th>
+</div>
+</html>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--suppress SpringElInspection, WebflowModelInspection -->
+<flow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://www.springframework.org/schema/webflow"
+      xsi:schemaLocation="
+      	http://www.springframework.org/schema/webflow
+      	http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <input name="order" required="true"/>
+
+    <view-state id="order" view="flows/view/show-order">
+        <on-entry>
+            <evaluate expression="order.getAssets()" result="flowScope.assets"/>
+            <evaluate expression="order.getEmployee()" result="flowScope.employee"/>
+        </on-entry>
+        <transition on="add" to="asset"/>
+        <transition on="cancel" to="end"/>
+        <transition on="removeitem" to="remove-item"/>
+        <transition on="finish" to="save-assets">
+            <set name="flowScope.status" value="'PUBLISHED'" type="string"/>
+        </transition>
+        <transition on="draft" to="save-assets">
+            <set name="flowScope.status" value="'DRAFT'" type="string"/>
+        </transition>
+    </view-state>
+
+    <view-state id="asset" view="flows/view/asset-form" model="asset">
+        <binder>
+            <binding property="deviceModel.deviceType.type" required="true"/>
+            <binding property="deviceModel.deviceBrand.brand" required="true"/>
+            <binding property="deviceModel.model" required="true"/>
+            <binding property="serialNumber" required="false"/>
+            <binding property="inventoryNumber" required="false"/>
+        </binder>
+        <on-entry>
+            <set name="flowScope.asset" value="new ru.trett.cis.models.Asset()"/>
+        </on-entry>
+        <transition on="next" to="order">
+            <evaluate expression="order.addAsset(flowScope.asset)"/>
+        </transition>
+        <transition on="cancel" to="order"/>
+    </view-state>
+
+    <action-state id="remove-item">
+        <evaluate expression="order.removeAsset(requestParameters.index)"/>
+        <transition to="order"/>
+    </action-state>
+
+    <action-state id="save-assets">
+        <evaluate
+                expression="inventoryService.save(flowScope.employee.getId(), flowScope.assets, flowScope.status, currentUser.name)"
+                result="flowScope.invoiceId"/>
+        <transition to="end"/>
+    </action-state>
+
+    <end-state id="end">
+        <output name="invoiceId" value="flowScope.invoiceId"/>
+    </end-state>
+
+</flow>

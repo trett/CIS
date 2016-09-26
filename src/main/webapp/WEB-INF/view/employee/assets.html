@@ -1,0 +1,79 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns="http://www.w3.org/1999/xhtml" layout:decorate="~{template/template}">
+<div layout:fragment="content">
+    <h3 th:text="${employee.firstName} + ' ' + ${employee.lastName}">Invoice</h3>
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#assets" th:text="#{assets}">Assets</a></li>
+        <li><a data-toggle="tab" href="#invoices" th:text="#{invoices}">Invoices</a></li>
+    </ul>
+    <div class="tab-content">
+        <div id="assets" class="tab-pane fade in active">
+            <div th:if="${not #lists.isEmpty(assets)}">
+                <table class="table table-hover table-striped" style="cursor:pointer">
+                    <thead>
+                    <tr>
+                        <th th:text="#{id}"></th>
+                        <th th:text="#{deviceType.type}"></th>
+                        <th th:text="#{deviceBrand.brand}"></th>
+                        <th th:text="#{deviceModel.model}"></th>
+                        <th th:text="#{asset.serialNumber}"></th>
+                        <th th:text="#{asset.inventoryNumber}"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="asset : ${assets}"
+                        th:onclick="'javascript:rowClicked(\'' + ${asset.id} + '\', \'asset\'); '">
+                        <td th:text="${asset.id}"></td>
+                        <td th:text="${asset.deviceModel.deviceType.type}"></td>
+                        <td th:text="${asset.deviceModel.deviceBrand.brand}"></td>
+                        <td th:text="${asset.deviceModel.model}"></td>
+                        <td th:text="${asset.serialNumber}"></td>
+                        <td th:text="${asset.inventoryNumber}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <a role="button" class="btn btn-default"
+                   th:href="@{/asset/tostock/{employeeId}(employeeId=${employee.id})}"
+                   th:onclick="'javascript:$.blockUI( { message: \'' + #{saving} + '\'} );'">
+                    <i class="fa fa-truck"></i>&nbsp;
+                    <span th:remove="tag" th:text="#{move.to.stock}"></span>
+                </a>
+            </div>
+            <p class="bg-info" th:text="#{not.found}" th:if="${#lists.isEmpty(assets)}"></p>
+        </div>
+        <div id="invoices" class="tab-pane fade">
+            <div th:if="${not #lists.isEmpty(invoices)}">
+                <table class="table table-hover table-striped" style="cursor: pointer">
+                    <thead>
+                    <tr>
+                        <th th:text="#{id}"></th>
+                        <th th:text="#{date}"></th>
+                        <th th:text="#{status}"></th>
+                        <th th:text="#{issuer.header}"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="invoice : ${invoices}"
+                        th:onclick="'javascript:rowClicked(\'' + ${invoice.id} + '\', \'invoice\'); '">
+                        <td th:text="${invoice.id}"></td>
+                        <td th:text="${#dates.format(invoice.date, 'dd MMM yyyy HH:mm')}"></td>
+                        <td th:text="${invoice.status}"></td>
+                        <td th:text="${invoice.issuer.firstName} + ' ' + ${invoice.issuer.lastName}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="bg-info" th:if="${#lists.isEmpty(invoices)}" th:text="#{not.found}"></p>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="script">
+    <script>
+        function rowClicked(value, url) {
+            location.href = "/" + url + "/" + value;
+        }
+    </script>
+</th:block>
+</html>

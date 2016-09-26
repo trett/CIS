@@ -1,0 +1,42 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<!--suppress ALL -->
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{template/template}">
+<div layout:fragment="content">
+    <h3 th:text="#{report}">Report</h3>
+    <hr>
+    <div class="row">
+        <div class="col-md-8">
+            <form id="asset-form" action="/report/form" method="post" th:object="${deviceModel}">
+                <div class="form-group">
+                    <label for="asset-form-type" class="control-label">Type</label>
+                    <select class="form-control" name="deviceType.type" id="asset-form-type">
+                        <option value="" th:disabled="disabled" th:selected="selected">Select Type</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="asset-form-brand" class="control-label">Brand</label>
+                    <select class="form-control" name="deviceBrand.brand" id="asset-form-brand">
+                        <option value="" th:disabled="disabled" th:selected="selected">Select Brand</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="asset-form-model" class="control-label">Model</label>
+                    <select class="form-control" name="model" id="asset-form-model">
+                        <option value="" th:disabled="disabled" th:selected="selected">Select Model</option>
+                    </select>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-default" type="submit">
+                        <i class="fa fa-arrow-right"></i>&nbsp;
+                        <span th:text="#{button.start}" th:remove="tag">Start</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="script">
+    <script th:src="@{/js/flows/invoice.js}"></script>
+</th:block>
+</html>

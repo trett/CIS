@@ -1,0 +1,42 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<!--suppress ALL -->
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns="http://www.w3.org/1999/xhtml" layout:decorate="~{template/template}">
+<div layout:fragment="content">
+    <h3 th:text="#{type.header}">Device Type</h3>
+    <hr>
+    <div class="col-md-6">
+        <form id="form" th:object="${deviceType}" th:action="${flowExecutionUrl}" method="post">
+            <div class="radio">
+                <label><input type="radio" name="exists" value="true" checked="checked"
+                              th:text="#{choose.exist}"/></label>
+            </div>
+            <div>
+                <select th:field="*{type}" id="form-select" class="form-control">
+                    <option th:each="type : ${deviceTypeList}" th:value="${type.type}" th:text="${type.type}"></option>
+                </select>
+            </div>
+            <div class="radio">
+                <label><input type="radio" name="exists" value="false" th:text="#{create.new}"/></label>
+            </div>
+            <div class="form-group" th:classappend="${#fields.hasErrors('type')} ? 'has-error'">
+                <input type="text" name="type" class="form-control" id="new-input" disabled="disabled"/>
+                <p th:if="${#fields.hasErrors('type')}" th:errors="*{type}" class="text-danger"></p>
+            </div>
+            <div class="btn-group">
+                <!--<input type="hidden" name="_flowExecutionKey" value="${flowExecutionKey}">-->
+                <button class="btn btn-default" name="_eventId_cancel">
+                    <i class="fa fa-ban">&nbsp;</i><span th:text="#{button.cancel}" th:remove="tag">Cancel</span>
+                </button>
+                <button class="btn btn-default" type="submit" name="_eventId_next">
+                    <i class="fa fa-arrow-right"></i>&nbsp;<span th:text="#{button.next}" th:remove="tag">Next</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<th:block layout:fragment="script">
+    <script th:src="@{/js/flows/model.js}"></script>
+</th:block>
+</html>

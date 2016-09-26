@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--suppress SpringElInspection, WebflowModelInspection -->
+<flow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://www.springframework.org/schema/webflow"
+      xsi:schemaLocation="
+      	http://www.springframework.org/schema/webflow
+      	http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <var name="deviceModel" class="ru.trett.cis.models.DeviceModel"/>
+    <var name="deviceType" class="ru.trett.cis.models.DeviceType"/>
+    <var name="deviceBrand" class="ru.trett.cis.models.DeviceBrand"/>
+
+    <view-state id="type" view="flows/view/type-form" model="deviceType">
+        <on-render>
+            <evaluate expression="inventoryService.list(T(ru.trett.cis.models.DeviceType))"
+                      result="viewScope.deviceTypeList"/>
+        </on-render>
+        <transition on="next" to="defineType"/>
+    </view-state>
+
+    <action-state id="defineType">
+        <set name="flowScope.isDeviceTypeExist" value="requestParameters.exists"/>
+        <evaluate expression="deviceType.type = requestParameters.type"/>
+        <transition to="brand"/>
+    </action-state>
+
+    <view-state id="brand" model="deviceBrand" view="flows/view/brand-form">
+        <on-render>
+            <evaluate expression="inventoryService.list(T(ru.trett.cis.models.DeviceBrand))"
+                      result="viewScope.deviceBrandList"/>
+        </on-render>
+        <transition on="next" to="defineBrand"/>
+    </view-state>
+
+    <action-state id="defineBrand">
+        <evaluate expression="deviceBrand.brand = requestParameters.brand"/>
+        <transition to="model">
+            <evaluate expression="deviceModel.setDeviceType(deviceType)"/>
+            <evaluate expression="deviceModel.setDeviceBrand(deviceBrand)"/>
+        </transition>
+    </action-state>
+
+    <view-state id="model" view="flows/view/model-form" model="deviceModel">
+        <transition on="save" to="save"/>
+    </view-state>
+
+    <action-state id="save">
+        <on-entry>
+            <evaluate expression="deviceModel.model = requestParameters.model"/>
+            <evaluate expression="deviceModel.itemNumber = requestParameters.itemNumber"/>
+        </on-entry>
+        <evaluate
+                expression="inventoryService.save( deviceType.type, deviceBrand.brand, deviceModel.model, deviceModel.itemNumber )"/>
+        <transition to="end"/>
+    </action-state>
+
+    <end-state id="end" view="externalRedirect:/home"/>
+
+    <global-transitions>
+        <transition on="cancel" to="end" bind="false"/>
+    </global-transitions>
+
+</flow>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--suppress SpringElInspection, WebflowModelInspection -->
+<flow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://www.springframework.org/schema/webflow"
+      xsi:schemaLocation="
+      	http://www.springframework.org/schema/webflow
+      	http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <var name="order" class="ru.trett.cis.utils.Order"/>
+
+    <view-state id="search-person" view="employee/search">
+        <transition on="next" to="search-employee"/>
+    </view-state>
+
+    <action-state id="search-employee">
+        <evaluate expression="inventoryService.findById(T(ru.trett.cis.models.Employee), requestParameters.id)"
+                  result="order.employee"/>
+        <transition to="asset-assignment"/>
+    </action-state>
+
+    <subflow-state id="asset-assignment" subflow="asset-flow">
+        <input name="order" value="order"/>
+        <output name="invoiceId"/>
+        <transition to="exit"/>
+    </subflow-state>
+
+    <decision-state id="exit">
+        <if test="invoiceId == null" then="home" else="invoice"/>
+    </decision-state>
+
+    <end-state id="home" view="externalRedirect:/home"/>
+    <end-state id="invoice" view="externalRedirect:/invoice/#{invoiceId}"/>
+
+    <global-transitions>
+        <transition on="cancel" to="home" bind="false"/>
+    </global-transitions>
+
+</flow>

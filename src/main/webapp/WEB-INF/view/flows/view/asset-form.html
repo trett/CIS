@@ -1,0 +1,73 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<!--suppress ALL -->
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{template/template}">
+<div layout:fragment="content">
+    <div class="row">
+        <div class="col-md-12">
+            <h3 th:text="#{invoice.for} + ' ' + ${employee.firstName} + ' ' + ${employee.lastName}"></h3>
+        </div>
+        <div class="col-md-6">
+            <form id="asset-form" th:action="${flowExecutionUrl}" method="post" th:object="${asset}">
+                <div class="form-group"
+                     th:classappend="${#fields.hasErrors('deviceModel.deviceType.type')} ? 'has-error'">
+                    <label for="asset-form-type" class="control-label">Type</label>
+                    <select class="form-control" name="deviceModel.deviceType.type" id="asset-form-type">
+                        <option value="" th:disabled="disabled" th:selected="selected">Select Type</option>
+                    </select>
+                    <p th:if="${#fields.hasErrors('deviceModel.deviceType.type')}"
+                       th:errors="*{deviceModel.deviceType.type}" class="text-danger">
+                    </p>
+                </div>
+                <div class="form-group"
+                     th:classappend="${#fields.hasErrors('deviceModel.deviceBrand.brand')} ? 'has-error'">
+                    <label for="asset-form-brand" class="control-label">Brand</label>
+                    <select class="form-control" name="deviceModel.deviceBrand.brand" id="asset-form-brand">
+                        <option value="" th:disabled="disabled" th:selected="selected">Select Brand</option>
+                    </select>
+                    <p th:if="${#fields.hasErrors('deviceModel.deviceBrand.brand')}"
+                       th:errors="*{deviceModel.deviceBrand.brand}" class="text-danger">
+                    </p>
+                </div>
+                <div class="form-group" th:classappend="${#fields.hasErrors('deviceModel.model')} ? 'has-error'">
+                    <label for="asset-form-model" class="control-label">Model</label>
+                    <select class="form-control" name="deviceModel.model" id="asset-form-model">
+                        <option value="" th:disabled="disabled" th:selected="selected">Select Model</option>
+                    </select>
+                    <p th:if="${#fields.hasErrors('deviceModel.model')}"
+                       th:errors="*{deviceModel.model}" class="text-danger">
+                    </p>
+                </div>
+                <div class="form-group" th:classappend="${#fields.hasErrors('serialNumber')} ? 'has-error'">
+                    <label for="asset-form-serial-number" class="control-label">Serial Number</label>
+                    <input type="text" class="form-control" th:field="${asset.serialNumber}"
+                           id="asset-form-serial-number" style="text-transform: uppercase"/>
+                    <p th:if="${#fields.hasErrors('serialNumber')}"
+                       th:errors="*{serialNumber}" class="text-danger">
+                    </p>
+                </div>
+                <div class="form-group" th:classappend="${#fields.hasErrors('inventoryNumber')} ? 'has-error'">
+                    <label for="asset-form-inventory-number">Inventory Number</label>
+                    <input type="text" class="form-control" th:field="${asset.inventoryNumber}"
+                           id="asset-form-inventory-number" style="text-transform: uppercase"/>
+                    <p th:if="${#fields.hasErrors('inventoryNumber')}"
+                       th:errors="*{inventoryNumber}" class="text-danger">
+                    </p>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-default" name="_eventId_cancel">
+                        <i class="fa fa-ban">&nbsp;</i><span th:text="#{button.cancel}" th:remove="tag">Cancel</span>
+                    </button>
+                    <button class="btn btn-default" type="submit" name="_eventId_next">
+                        <i class="fa fa-arrow-right"></i>&nbsp;<span th:text="#{button.next}"
+                                                                     th:remove="tag">Next</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="script">
+    <script th:src="@{/js/flows/invoice.js}"></script>
+</th:block>
+</html>
