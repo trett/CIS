@@ -1,4 +1,7 @@
 ##Inventory System
+
+![alt tag](https://raw.githubusercontent.com/trett/cis/master/cis.png)
+
 ####Spring profiles
 -`inmem` - in memory authentication  
 -`ldap` - LDAP server authentication  
