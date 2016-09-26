@@ -30,9 +30,7 @@ import ru.trett.cis.interfaces.DeviceModelDAO;
 import ru.trett.cis.models.DeviceModel;
 
 import javax.inject.Inject;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public class DeviceModelDAOImpl implements DeviceModelDAO {
@@ -74,7 +72,6 @@ public class DeviceModelDAOImpl implements DeviceModelDAO {
     @SuppressWarnings("unchecked")
     public List<DeviceModel> findModelsByTypeAndBrand(String deviceType, String deviceBrand) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(DeviceModel.class);
-        Map<String, Object> properties = new HashMap<>();
         criteria.createAlias("deviceType", "dt");
         criteria.createAlias("deviceBrand", "db");
         return criteria
