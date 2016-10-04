@@ -27,10 +27,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import ru.trett.cis.interfaces.InventoryService;
+import ru.trett.cis.interfaces.XLSBuilder;
 import ru.trett.cis.models.Asset;
 import ru.trett.cis.models.DeviceModel;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -39,20 +42,25 @@ public class ReportController {
 
     private final InventoryService inventoryService;
 
+    private final XLSBuilder xlsBuilder;
+
+    private List<List<String>> data;
+
     @Inject
-    public ReportController(InventoryService inventoryService) {
+    public ReportController(InventoryService inventoryService, XLSBuilder xlsBuilder) {
         this.inventoryService = inventoryService;
+        this.xlsBuilder = xlsBuilder;
     }
 
-    @RequestMapping(value = "devicemodelform")
-    public String showForm(Model model, DeviceModel deviceModel) {
+    @RequestMapping(value = "/devicemodelform")
+    public String showModelForm(Model model, DeviceModel deviceModel) {
         model.addAttribute("deviceModel", deviceModel);
         return "reports/form";
     }
 
 
     @RequestMapping(value = "/form", method = RequestMethod.POST)
-    public String processForm(@ModelAttribute DeviceModel dm, Model model) {
+    public String processModelForm(@ModelAttribute DeviceModel dm, Model model) {
         DeviceModel deviceModel =
                 inventoryService
                         .getModelByTypeAndBrandAndModel(
@@ -61,8 +69,24 @@ public class ReportController {
                                 dm.getModel()
                         );
         List<Asset> assets = inventoryService.assetsByDeviceModel(deviceModel);
-        model.addAttribute("assets", assets);
+        data = new ArrayList<>();
+        for (Asset asset : assets) {
+            List<String> col = new ArrayList<>();
+            col.add(asset.getEmployee().getFirstName());
+            col.add(asset.getEmployee().getLastName());
+            col.add(asset.getDeviceModel().getDeviceType().getType());
+            col.add(asset.getDeviceModel().getDeviceBrand().getBrand());
+            col.add(asset.getDeviceModel().getModel());
+            col.add(asset.getStatus().name());
+            data.add(col);
+        }
+        model.addAttribute("data", data);
         return "reports/table";
+    }
+
+    @RequestMapping(value = "/xls")
+    public void downloadXLS(HttpServletResponse response) {
+        xlsBuilder.downloadXLSFile(response, data);
     }
 
 }
