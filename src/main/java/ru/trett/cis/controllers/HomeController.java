@@ -52,7 +52,7 @@ public class HomeController {
 
     @RequestMapping
     public String mainPage(Model model) {
-        model.addAttribute("track", inventoryService.list(Tracking.class, 1, 10));
+        model.addAttribute("track", inventoryService.list(Tracking.class, 0, 10));
         model.addAttribute("resultMapperList", inventoryService.assetGroupByStatus());
         return "home/index";
     }

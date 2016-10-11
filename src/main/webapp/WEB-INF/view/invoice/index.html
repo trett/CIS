@@ -43,7 +43,7 @@
             <i class="fa fa-trash-o"></i>&nbsp;<span th:text="#{button.delete}" th:remove="tag">Save</span>
         </button>
         <button type="button" class="btn btn-default" id="publish-button"
-                th:onclick="'javascript:publish(' + ${invoice.id} + ')'">
+                th:onclick="'javascript:publish(' + ${invoice.id} + ')'" th:disabled="${invoice.status.name().equals('PUBLISHED')}">
             <i class="fa fa-registered"></i>&nbsp;<span th:text="#{button.publish}" th:remove="tag"></span>
         </button>
         <button type="button" class="btn btn-default" id="print-button"
