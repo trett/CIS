@@ -56,14 +56,9 @@ public class PDFBuilderTest extends Assert {
         issuer.setLastName("Козлов");
         pdfBuilder.setIssuer(issuer);
         Asset asset = new Asset();
-        DeviceModel dm = new DeviceModel();
-        DeviceBrand db = new DeviceBrand();
-        DeviceType dt = new DeviceType();
-        db.setBrand("HP");
-        dt.setType("Laptop");
-        dm.setModel("840 G1");
-        dm.setDeviceBrand(db);
-        dm.setDeviceType(dt);
+        DeviceBrand db = new DeviceBrand("HP");
+        DeviceType dt = new DeviceType("Laptop");
+        DeviceModel dm = new DeviceModel(dt, db, "840 G1");
         asset.setDeviceModel(dm);
         asset.setSerialNumber("32179879");
         asset.setInventoryNumber("A000402");

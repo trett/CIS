@@ -48,14 +48,22 @@ public class DeviceModel extends BaseEntity {
     private String itemNumber;
 
     @IndexedEmbedded
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     @JoinColumn(name = "device_brand_id")
     private DeviceBrand deviceBrand;
 
     @IndexedEmbedded
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     @JoinColumn(name = "device_type_id")
     private DeviceType deviceType;
+
+    public DeviceModel() {}
+
+    public DeviceModel(DeviceType type, DeviceBrand brand, String model) {
+        this.deviceType = type;
+        this.deviceBrand = brand;
+        this.model = model;
+    }
 
     public String getModel() {
         return model;

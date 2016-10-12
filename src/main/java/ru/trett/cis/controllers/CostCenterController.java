@@ -47,7 +47,7 @@ public class CostCenterController {
 
     @RequestMapping(value = "/list")
     public String list(Model model) {
-        model.addAttribute("object", new CostCenter());
+        model.addAttribute("object", "CostCenter");
         return "costcenter/table";
     }
 

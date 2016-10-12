@@ -48,13 +48,22 @@ public class Tracking extends BaseEntity {
     private Timestamp date;
 
     @IndexedEmbedded(includeEmbeddedObjectId = true)
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     @JoinColumn(name = "asset_id")
     private Asset asset;
 
     @Field
     @Column(name = "event")
     private String event;
+
+    public Tracking() {}
+
+    public Tracking(User issuer, Timestamp date, Asset asset, String event) {
+        this.issuer = issuer;
+        this.date = date;
+        this.asset = asset;
+        this.event = event;
+    }
 
     public User getIssuer() {
         return issuer;

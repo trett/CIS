@@ -53,7 +53,7 @@ public class DeviceModelController {
 
     @RequestMapping(value = "/list")
     public String list(Model model) {
-        model.addAttribute("object", new DeviceModel());
+        model.addAttribute("object", "DeviceModel");
         return "devicemodel/table";
     }
 

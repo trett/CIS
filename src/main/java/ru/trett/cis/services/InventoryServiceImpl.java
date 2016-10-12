@@ -133,10 +133,16 @@ public class InventoryServiceImpl implements InventoryService {
     @Transactional
     public Long save(final Long employeeId, final List<Asset> assetList, String status, String loginName)
             throws BindingException {
-        Invoice invoice = new Invoice();
         Timestamp date = new Timestamp(new Date().getTime());
         Employee employee = findById(Employee.class, employeeId);
         User issuer = userDAO.findByLoginName(loginName);
+
+        Invoice invoice = new Invoice(date,
+                EnumUtil.lookup(Invoice.Status.class, status),
+                issuer,
+                employee);
+        save(invoice);
+
         for (Asset asset : assetList) {
             DeviceModel deviceModel = getModelByTypeAndBrandAndModel(
                     asset.getDeviceModel().getDeviceType().getType(),
@@ -144,6 +150,7 @@ public class InventoryServiceImpl implements InventoryService {
                     asset.getDeviceModel().getModel());
             if (deviceModel == null)
                 throw new BindingException("Device Model is unknown.");
+
             // check if asset exists
             if (!asset.getSerialNumber().isEmpty()) {
                 List<Asset> assets = assetDAO.getAssetsBySerialNumber(asset.getSerialNumber().toUpperCase());
@@ -158,10 +165,6 @@ public class InventoryServiceImpl implements InventoryService {
             asset.setSerialNumber(asset.getSerialNumber().toUpperCase());
             asset.setInventoryNumber(asset.getInventoryNumber().toUpperCase());
             asset.setEmployee(employee);
-            EmployeeAsset employeeAsset = new EmployeeAsset();
-            invoice.setStatus(EnumUtil.lookup(Invoice.Status.class, status));
-            invoice.setIssuer(issuer);
-            invoice.setEmployee(employee);
             switch (invoice.getStatus()) {
                 case PUBLISHED:
                     asset.setStatus(Asset.Status.ACTIVE);
@@ -171,19 +174,14 @@ public class InventoryServiceImpl implements InventoryService {
                     break;
             }
             save(asset);
-            employeeAsset.setAsset(asset);
-            invoice.setDate(date);
-            save(invoice);
-            employeeAsset.setInvoice(invoice);
-            employeeAsset.setEmployee(employee);
+
+            EmployeeAsset employeeAsset = new EmployeeAsset(employee, asset, invoice);
             save(employeeAsset);
-            Tracking tracking = new Tracking();
-            tracking.setAsset(asset);
-            tracking.setIssuer(issuer);
-            tracking.setEvent("Was created and added to Database");
-            tracking.setDate(date);
+
+            Tracking tracking = new Tracking(issuer, date, asset, "Was created and added to Database");
             save(tracking);
         }
+
         return invoice.getId();
     }
 
@@ -261,20 +259,18 @@ public class InventoryServiceImpl implements InventoryService {
     public void save(String deviceType, String deviceBrand, String deviceModel, String itemNumber) {
         DeviceType type = getDeviceTypeByName(deviceType);
         if (type == null) {
-            type = new DeviceType();
-            type.setType(deviceType);
+            type = new DeviceType(deviceType);
             save(type);
         }
+
         DeviceBrand brand = getDeviceBrandByName(deviceBrand);
         if (brand == null) {
-            brand = new DeviceBrand();
-            brand.setBrand(deviceBrand);
+            brand = new DeviceBrand(deviceBrand);
             save(brand);
         }
-        DeviceModel model = new DeviceModel();
-        model.setDeviceType(type);
-        model.setDeviceBrand(brand);
-        model.setModel(deviceModel);
+
+        DeviceModel model = new DeviceModel(type, brand, deviceModel);
+
         if (itemNumber != null)
             model.setItemNumber(itemNumber);
         save(model);
@@ -372,12 +368,13 @@ public class InventoryServiceImpl implements InventoryService {
         asset.setStatus(EnumUtil.lookup(Asset.Status.class, status));
         asset.setComment(comment);
         save(asset);
-        Tracking tracking = new Tracking();
         User issuer = userDAO.findByLoginName(SecurityContextHolder.getContext().getAuthentication().getName());
-        tracking.setIssuer(issuer);
-        tracking.setDate(new Timestamp(new Date().getTime()));
-        tracking.setAsset(asset);
-        tracking.setEvent("Changed status to " + asset.getStatus());
+        Tracking tracking = new Tracking(
+                issuer,
+                new Timestamp(new Date().getTime()),
+                asset,
+                "Changed status to " + asset.getStatus()
+        );
         save(tracking);
     }
 
@@ -410,11 +407,12 @@ public class InventoryServiceImpl implements InventoryService {
                     if (x.getStatus() != Asset.Status.ACTIVE)
                         throw new RuntimeException("Asset with id " + x.getId() + " not ACTIVE");
                     x.setStatus(status);
-                    Tracking tracking = new Tracking();
-                    tracking.setAsset(x);
-                    tracking.setEvent("Changed status to " + status);
-                    tracking.setDate(new Timestamp(new Date().getTime()));
-                    tracking.setIssuer(issuer);
+                    Tracking tracking = new Tracking(
+                            issuer,
+                            new Timestamp(new Date().getTime()),
+                            x,
+                            "Changed status to " + status
+                    );
                     save(x);
                     save(tracking);
                 });

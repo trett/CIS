@@ -60,7 +60,7 @@ public class Employee extends BaseEntity {
     private String position;
 
     @IndexedEmbedded
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     @JoinColumn(name = "cost_center_id")
     private CostCenter costCenter;
 

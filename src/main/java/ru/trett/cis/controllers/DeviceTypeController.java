@@ -47,7 +47,7 @@ public class DeviceTypeController {
 
     @RequestMapping(value = "list")
     public String list(Model model) {
-        model.addAttribute("object", new DeviceType());
+        model.addAttribute("object", "DeviceType");
         return "devicetype/table";
     }
 

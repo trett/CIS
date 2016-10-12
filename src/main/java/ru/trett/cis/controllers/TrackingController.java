@@ -46,7 +46,7 @@ public class TrackingController {
     public String list(Model model) {
         List<Tracking> trackingList = inventoryService.list(Tracking.class);
         model.addAttribute("list", trackingList);
-        model.addAttribute("object", new Tracking());
+        model.addAttribute("object", "Tracking");
         return "tracking/table";
     }
 

@@ -48,6 +48,12 @@ public class DeviceBrand extends BaseEntity {
     @OneToMany(mappedBy = "deviceBrand")
     private Set<DeviceModel> deviceModels;
 
+    public DeviceBrand() {}
+
+    public DeviceBrand(String brand) {
+        this.brand = brand;
+    }
+
     public String getBrand() {
         return brand;
     }

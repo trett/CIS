@@ -49,6 +49,14 @@ public class EmployeeAsset extends BaseEntity {
     @JoinColumn(name = "invoice_id")
     private Invoice invoice;
 
+    public EmployeeAsset() {}
+
+    public EmployeeAsset(Employee employee, Asset asset, Invoice invoice) {
+        this.employee = employee;
+        this.asset = asset;
+        this.invoice = invoice;
+    }
+
     public Employee getEmployee() {
         return employee;
     }

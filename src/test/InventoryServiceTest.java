@@ -45,7 +45,7 @@ import ru.trett.cis.interfaces.InventoryService;
 import ru.trett.cis.models.*;
 import ru.trett.cis.validators.*;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -106,15 +106,9 @@ public class InventoryServiceTest extends Assert {
     }
 
     private DeviceModel createModel(String dt, String db, String dm) {
-        DeviceType deviceType = new DeviceType();
-        deviceType.setType(dt);
-        DeviceBrand deviceBrand = new DeviceBrand();
-        deviceBrand.setBrand(db);
-        DeviceModel deviceModel = new DeviceModel();
-        deviceModel.setModel(dm);
-        deviceModel.setDeviceType(deviceType);
-        deviceModel.setDeviceBrand(deviceBrand);
-        return deviceModel;
+        DeviceType deviceType = new DeviceType(dt);
+        DeviceBrand deviceBrand = new DeviceBrand(db);
+        return new DeviceModel(deviceType, deviceBrand, dm);
     }
 
     @Before
@@ -122,22 +116,14 @@ public class InventoryServiceTest extends Assert {
         if (!initializedFlag) {
             inventoryService.save(cc);
             inventoryService.save(employee);
-            DeviceType type = new DeviceType();
-            type.setType("Laptop");
+            DeviceType type = new DeviceType("Laptop");
             inventoryService.save(type);
-            DeviceBrand brand = new DeviceBrand();
-            brand.setBrand("HP");
+            DeviceBrand brand = new DeviceBrand("HP");
             inventoryService.save(brand);
-            DeviceModel model = new DeviceModel();
-            model.setDeviceType(type);
-            model.setDeviceBrand(brand);
-            model.setModel("folio 1040");
+            DeviceModel model = new DeviceModel(type, brand, "folio 1040");
             model.setItemNumber("000111");
             inventoryService.save(model);
-            DeviceModel model2 = new DeviceModel();
-            model2.setDeviceType(type);
-            model2.setDeviceBrand(brand);
-            model2.setModel("pro 1234");
+            DeviceModel model2 = new DeviceModel(type, brand, "pro 1234");
             model2.setItemNumber("000112");
             inventoryService.save(model2);
             Asset asset = new Asset();
@@ -148,12 +134,9 @@ public class InventoryServiceTest extends Assert {
             asset2.setDeviceModel(model2);
             asset2.setSerialNumber("002");
             asset2.setInventoryNumber("002");
-            List<Asset> assets = new ArrayList<Asset>() {{
-                add(asset);
-                add(asset2);
-            }};
+            asset2.setComment("test comment");
             inventoryService.save(user);
-            inventoryService.save(employee.getId(), assets, "PUBLISHED", user.getLoginName());
+            inventoryService.save(employee.getId(), Arrays.asList(asset, asset2), "PUBLISHED", user.getLoginName());
             initializedFlag = true;
         }
         requestContext = new MockRequestContext();
@@ -259,16 +242,14 @@ public class InventoryServiceTest extends Assert {
 
     @Test
     public void deviceTypeValidator() throws Exception {
-        DeviceType dt = new DeviceType();
-        dt.setType("Laptop");
+        DeviceType dt = new DeviceType("Laptop");
         deviceTypeValidator.validateType(dt, validationContext);
         assertEquals(1, requestContext.getMessageContext().getAllMessages().length);
     }
 
     @Test
     public void deviceBrandValidator() throws Exception {
-        DeviceBrand db = new DeviceBrand();
-        db.setBrand("HP");
+        DeviceBrand db = new DeviceBrand("HP");
         deviceBrandValidator.validateBrand(db, validationContext);
         assertEquals(1, requestContext.getMessageContext().getAllMessages().length);
     }
@@ -281,16 +262,14 @@ public class InventoryServiceTest extends Assert {
 
     @Test
     public void deviceTypeValidatorIgnoreCase() throws Exception {
-        DeviceType dt = new DeviceType();
-        dt.setType("LaPtoP");
+        DeviceType dt = new DeviceType("LaPtoP");
         deviceTypeValidator.validateType(dt, validationContext);
         assertEquals(1, requestContext.getMessageContext().getAllMessages().length);
     }
 
     @Test
     public void deviceBrandValidatorIgnoreCase() throws Exception {
-        DeviceBrand db = new DeviceBrand();
-        db.setBrand("hP");
+        DeviceBrand db = new DeviceBrand("hP");
         deviceBrandValidator.validateBrand(db, validationContext);
         assertEquals(1, requestContext.getMessageContext().getAllMessages().length);
     }
@@ -304,8 +283,7 @@ public class InventoryServiceTest extends Assert {
     @Test
     public void deviceTypeValidatorExists() throws Exception {
         map.put("exists", "true");
-        DeviceType dt = new DeviceType();
-        dt.setType("Laptop");
+        DeviceType dt = new DeviceType("Laptop");
         deviceTypeValidator.validateType(dt, validationContext);
         assertEquals(0, requestContext.getMessageContext().getAllMessages().length);
     }
@@ -313,8 +291,7 @@ public class InventoryServiceTest extends Assert {
     @Test
     public void deviceBrandValidatorExists() throws Exception {
         map.put("exists", "true");
-        DeviceBrand db = new DeviceBrand();
-        db.setBrand("HP");
+        DeviceBrand db = new DeviceBrand("HP");
         deviceBrandValidator.validateBrand(db, validationContext);
         assertEquals(0, requestContext.getMessageContext().getAllMessages().length);
     }

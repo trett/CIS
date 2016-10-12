@@ -45,7 +45,7 @@ public class AssetController {
 
     @RequestMapping(value = "/list")
     public String list(Model model) {
-        model.addAttribute("object", new Asset());
+        model.addAttribute("object", "Asset");
         return "asset/table";
     }
 

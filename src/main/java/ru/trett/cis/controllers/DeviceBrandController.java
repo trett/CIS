@@ -47,7 +47,7 @@ public class DeviceBrandController {
 
     @RequestMapping(value = "/list")
     public String list(Model model) {
-        model.addAttribute("object", new DeviceBrand());
+        model.addAttribute("object", "DeviceBrand");
         return "devicebrand/table";
     }
 

@@ -56,7 +56,7 @@ public class EmployeeController {
 
     @RequestMapping(value = "/list")
     public String employeeList(Model model) {
-        model.addAttribute("object", new Employee());
+        model.addAttribute("object", "Employee");
         return "employee/table";
     }
 

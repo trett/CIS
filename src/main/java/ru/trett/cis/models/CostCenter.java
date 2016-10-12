@@ -52,6 +52,12 @@ public class CostCenter extends BaseEntity {
     @JsonIgnore
     private Set<Employee> employees;
 
+    public CostCenter() {}
+
+    public CostCenter(String number) {
+        this.number = number;
+    }
+
     public String getNumber() {
         return number;
     }

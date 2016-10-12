@@ -1,7 +1,8 @@
 <div xmlns:th="http://www.thymeleaf.org" th:fragment="init-table">
     <script th:src="@{/js/Table.js}"></script>
     <script type="text/javascript" th:inline="javascript">
-        //static data
+
+        //Table fields will used for each model
         var asset = {
             'Asset': ['id', 'deviceModel.deviceType.type',
                 'deviceModel.deviceBrand.brand', 'serialNumber', 'inventoryNumber', 'status']
@@ -12,17 +13,12 @@
         var costCenter = {'CostCenter': ['number', 'description']};
         var employee = {'Employee': ['firstName', 'lastName', 'middleName', 'position', 'costCenter.number']};
         var invoice = {'Invoice': ['id', 'date', 'status', 'issuer.loginName']};
-        var tracking = {'Tracking': ['asset.id','asset.serialNumber', 'event', 'date', 'issuer.loginName']};
+        var tracking = {'Tracking': ['asset.id', 'asset.serialNumber', 'event', 'date', 'issuer.loginName']};
 
         //define class and fields for table
-        var object = [[${object}]];
-        var className = object["__class"].split(".").pop();
+        var className = [[${object}]];
         var variable = className.charAt(0).toLowerCase() + className.slice(1);
         var currentData = window[variable];
-        console.log(className);
-        //        $.each(currentData[className], function (i, val) {
-        //            $('#datatable thead tr').append("<th>" + val + "</th>");
-        //        });
         var data = {};
         data.obj = className;
         data.fields = currentData[className];

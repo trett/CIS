@@ -47,6 +47,12 @@ public class DeviceType extends BaseEntity {
     @OneToMany(mappedBy = "deviceType")
     private Set<DeviceModel> deviceModels;
 
+    public DeviceType() {}
+
+    public DeviceType(String type) {
+        this.type = type;
+    }
+
     public String getType() {
         return type;
     }

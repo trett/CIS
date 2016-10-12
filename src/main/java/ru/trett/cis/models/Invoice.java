@@ -54,7 +54,7 @@ public class Invoice extends BaseEntity {
     private Status status;
 
     @IndexedEmbedded
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     @JoinColumn(name = "issuer_id")
     private User issuer;
 
@@ -62,6 +62,15 @@ public class Invoice extends BaseEntity {
     @IndexedEmbedded
     @JoinColumn(name = "employee_id")
     private Employee employee;
+
+    public Invoice() {}
+
+    public Invoice(Timestamp date, Status status, User issuer, Employee employee) {
+        this.date = date;
+        this.status = status;
+        this.issuer = issuer;
+        this.employee = employee;
+    }
 
     @JsonIgnore
     public Set<EmployeeAsset> getEmployeeAssets() {

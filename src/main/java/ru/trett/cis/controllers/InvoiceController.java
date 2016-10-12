@@ -66,7 +66,7 @@ public class InvoiceController {
 
     @RequestMapping(value = "/list")
     public String list(Model model) {
-        model.addAttribute("object", new Invoice());
+        model.addAttribute("object", "Invoice");
         return "invoice/table";
     }
 
