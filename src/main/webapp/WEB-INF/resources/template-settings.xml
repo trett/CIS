@@ -1,0 +1,21 @@
+<?xml version="1.1" encoding="UTF-8" ?>
+<act>
+    <header>ACT of ACCEPTANCE</header>
+    <paragraph>
+        We, the undersigned, on part of the Company, and on part of the Employee, executed this Act.
+    </paragraph>
+    <paragraph>
+        1. To take care of with equipment
+        2. Call to IT Department in case of broken.
+    </paragraph>
+    <table>
+        <col>Equipment</col>
+        <col>Serial number</col>
+        <col>Inventory number</col>
+    </table>
+    <signers>
+        <signer>IT-engineer</signer>
+        <signer>Employee</signer>
+    </signers>
+    <place>Russia, Kaluga</place>
+</act>

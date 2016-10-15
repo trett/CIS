@@ -33,6 +33,7 @@ import ru.trett.cis.interfaces.PDFBuilder;
 import ru.trett.cis.models.Asset;
 import ru.trett.cis.models.Employee;
 import ru.trett.cis.models.User;
+import ru.trett.cis.utils.TemplateParser;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
@@ -43,6 +44,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 @Service("pdfBuilder")
 public class PDFBuilderImpl implements PDFBuilder {
@@ -92,6 +94,8 @@ public class PDFBuilderImpl implements PDFBuilder {
     @Override
     public String createPDF() throws IOException, DocumentException, ApplicationException {
         try {
+            String templatePath = servletContext.getRealPath("WEB-INF/resources/template-settings.xml");
+            Map<String, List<String>> data = TemplateParser.parse(new File(templatePath));
             String regularFontPath = servletContext.getRealPath("WEB-INF/resources/fonts/OpenSans-Regular.ttf");
             if (regularFontPath == null)
                 throw new ApplicationException("Regular Font file was not found");
@@ -101,91 +105,82 @@ public class PDFBuilderImpl implements PDFBuilder {
                 throw new ApplicationException("Bold Font file was not found");
             BaseFont bfb = BaseFont.createFont(boldFontPath, BaseFont.IDENTITY_H, true);
             regularFont = new Font(bfr);
+            regularFont.setSize(10);
             boldFont = new Font(bfb);
+            boldFont.setSize(10);
+
+            File file = File.createTempFile("order", ".pdf");
+            Document doc = new Document(PageSize.A4);
+            Chunk glue = new Chunk(new VerticalPositionMark());
+            PdfWriter.getInstance(doc, new FileOutputStream(file));
+            doc.open();
+            doc.newPage();
+
+            //title
+            Paragraph p = new Paragraph(data.get("header").get(0), boldFont);
+            p.setAlignment(Element.ALIGN_CENTER);
+            doc.add(p);
+            doc.add(Chunk.NEWLINE);
+
+            //body
+            for (String text : data.get("text")) {
+                p = new Paragraph(text, regularFont);
+                doc.add(p);
+            }
+
+            //table
+            doc.add(Chunk.NEWLINE);
+            List<String> cols = data.get("cols");
+            PdfPTable table = new PdfPTable(cols.size());
+            table.setWidthPercentage(100);
+
+            cols.forEach(x -> table.addCell(getCell(x, PdfPCell.ALIGN_CENTER, boldFont)));
+
+            for (Asset asset : assets) {
+                table.addCell(getCell(String.format("%s %s %s",
+                        asset.getDeviceModel().getDeviceType().getType(),
+                        asset.getDeviceModel().getDeviceBrand().getBrand(),
+                        asset.getDeviceModel().getModel()), PdfPCell.ALIGN_CENTER, regularFont));
+                table.addCell(getCell(asset.getSerialNumber(), PdfPCell.ALIGN_CENTER, regularFont));
+                table.addCell(getCell(asset.getInventoryNumber(), PdfPCell.ALIGN_CENTER, regularFont));
+            }
+
+            table.getRows();
+            doc.add(table);
+            doc.add(Chunk.NEWLINE);
+            doc.add(Chunk.NEWLINE);
+
+            //signers
+            Phrase phrase = new Phrase(new Chunk(data.get("signers").get(0) + " ", regularFont));
+            phrase.add(Chunk.NEWLINE);
+            phrase.add(new Chunk(issuer.getFirstName() + " " + issuer.getLastName() + "  \\__________________",
+                    regularFont));
+            phrase.add(Chunk.NEWLINE);
+            phrase.add(Chunk.NEWLINE);
+            phrase.add(new Chunk(data.get("signers").get(1) + " ", regularFont));
+            phrase.add(Chunk.NEWLINE);
+            phrase.add(new Chunk(employee.getFirstName() + " " + employee.getLastName() + "  \\__________________",
+                    regularFont));
+            doc.add(phrase);
+
+            //date
+            doc.add(Chunk.NEWLINE);
+            doc.add(Chunk.NEWLINE);
+            p = new Paragraph(data.get("place").get(0), regularFont);
+            p.add(new Chunk(glue));
+            p.add(date.format(dateFormat));
+            doc.add(p);
+            doc.close();
+            return file.getPath();
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        File file = File.createTempFile("order", ".pdf");
-        Document doc = new Document(PageSize.A4);
-        Chunk glue = new Chunk(new VerticalPositionMark());
-        PdfWriter.getInstance(doc, new FileOutputStream(file));
-        doc.open();
-        doc.newPage();
-        //title
-        Paragraph p = new Paragraph("Акт приема-передачи", boldFont);
-        p.setAlignment(Element.ALIGN_CENTER);
-        doc.add(p);
-        doc.add(Chunk.NEWLINE);
-        //body
-        p = new Paragraph(String.format(
-                "Настоящий документ подтверждает, что оборудование, готовое к работе, получает сотрудник %s %s.",
-                employee.getFirstName(), employee.getLastName()),
-                regularFont
-        );
-        doc.add(p);
-        p = new Paragraph(
-                "Данное оборудование закрепляется за сотрудником, и с момента выдачи он несет за него ответственность.",
-                regularFont
-        );
-        doc.add(p);
-        doc.add(Chunk.NEWLINE);
-        p = new Paragraph("Сотрудник обязуется:", boldFont);
-        doc.add(p);
-        com.itextpdf.text.List list = new com.itextpdf.text.List(com.itextpdf.text.List.ORDERED);
-        list.add(new ListItem(new Chunk("бережно обращаться с выданным ему оборудованием," +
-                " эксплуатировать его только по назначению",
-                regularFont)));
-        list.add(new ListItem(new Chunk("в случае поломки, выхода оборудования из строя или наличия каких-либо неполадок" +
-                " в его работе необходимо немедленно сообщить об этом в департамент ИТ",
-                regularFont)));
-        doc.add(list);
-
-        //table
-        PdfPTable table = new PdfPTable(3);
-        table.setWidthPercentage(100);
-        doc.add(Chunk.NEWLINE);
-        table.addCell(getCell("Оборудование", PdfPCell.ALIGN_CENTER));
-        table.addCell(getCell("Серийный номер", PdfPCell.ALIGN_CENTER));
-        table.addCell(getCell("Инвентарный номер", PdfPCell.ALIGN_CENTER));
-        for (Asset asset : assets) {
-            table.addCell(getCell(String.format("%s %s %s",
-                    asset.getDeviceModel().getDeviceType().getType(),
-                    asset.getDeviceModel().getDeviceBrand().getBrand(),
-                    asset.getDeviceModel().getModel()), PdfPCell.ALIGN_CENTER));
-            table.addCell(getCell(asset.getSerialNumber(), PdfPCell.ALIGN_CENTER));
-            table.addCell(getCell(asset.getInventoryNumber(), PdfPCell.ALIGN_CENTER));
-        }
-        table.getRows();
-        doc.add(table);
-        doc.add(Chunk.NEWLINE);
-        doc.add(Chunk.NEWLINE);
-        //footer
-        doc.add(Chunk.NEWLINE);
-        doc.add(Chunk.NEWLINE);
-        p = new Paragraph("Подпись сотрудника департамента ИТ", regularFont);
-        p.add(glue);
-        p.add(String.format("_______________   %s %s", issuer.getFirstName(), issuer.getLastName()));
-        doc.add(p);
-        doc.add(Chunk.NEWLINE);
-        doc.add(Chunk.NEWLINE);
-        p = new Paragraph("Подпись сотрудника, получившего оборудование", regularFont);
-        p.add(glue);
-        p.add(String.format("_______________   %s %s", employee.getFirstName(), employee.getLastName()));
-        doc.add(p);
-        //date
-        doc.add(Chunk.NEWLINE);
-        doc.add(Chunk.NEWLINE);
-        p = new Paragraph("г. Калуга", regularFont);
-        p.add(new Chunk(glue));
-        p.add(String.format(" %s г.", date.format(dateFormat)));
-        doc.add(p);
-        doc.close();
-        return file.getPath();
     }
 
-    private PdfPCell getCell(String text, int alignment) {
-        PdfPCell cell = new PdfPCell(new Phrase(text, regularFont));
-        cell.setPadding(10);
+    private PdfPCell getCell(String text, int alignment, Font font) {
+        PdfPCell cell = new PdfPCell(new Phrase(text, font));
+        cell.setPadding(5);
         cell.setHorizontalAlignment(alignment);
         return cell;
     }

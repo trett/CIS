@@ -48,12 +48,12 @@ public class PDFBuilderTest extends Assert {
     @Test
     public void createPDF() throws Exception {
         Employee employee = new Employee();
-        employee.setFirstName("Иван");
-        employee.setLastName("Иванов");
+        employee.setFirstName("John");
+        employee.setLastName("Smith");
         pdfBuilder.setEmployee(employee);
         User issuer = new User();
-        issuer.setFirstName("Петр");
-        issuer.setLastName("Козлов");
+        issuer.setFirstName("Peter");
+        issuer.setLastName("Cruz");
         pdfBuilder.setIssuer(issuer);
         Asset asset = new Asset();
         DeviceBrand db = new DeviceBrand("HP");
