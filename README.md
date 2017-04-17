@@ -1,16 +1,17 @@
-##Inventory System
+## Inventory System
 
 ![alt tag](https://raw.githubusercontent.com/trett/cis/master/cis.png)
 
-####Spring profiles
--`inmem` - in memory authentication  
--`ldap` - LDAP server authentication  
--`test` - test properties for H2 database from test.properties.file  
--`prod` - production properties for database from database.properties  
-####examples
-#####run dev+mysql
+**Spring profiles**
+- `inmem` - in memory authentication  
+- `ldap` - LDAP server authentication  
+- `test` - test properties for H2 database from test.properties.file  
+- `prod` - production properties for database from database.properties
+
+**Examples**
+- run dev+mysql
 `mvn jetty:run -Ddatabase=mysql -Djetty=true -Dwar=false -Dspring.profiles.active="prod,inmem"`
-#####build war
+- build war
 `mvn package -Ddatabase=mysql -Dwar=true`
 
 **Must be deployed in ROOT context**  
